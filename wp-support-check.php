@@ -36,7 +36,7 @@ class Sb_Security_Check {
 	 * @return string[]
 	 */
 	public function plugin_table_columns( $columns ) {
-		$columns['wpsc_status'] = 'Security Check';
+		$columns['wpsc_status'] = 'Status Check';
 
 		return $columns;
 	}
