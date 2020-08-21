@@ -36,14 +36,34 @@ class sb_security_check {
 					$plugin_details   = json_decode( wp_remote_retrieve_body( $payload ) );
 					$last_update_date = DateTime::createFromFormat( 'Y-m-d', substr( $plugin_details->last_updated, 0, 10 ) );
 
+					$days_since_update = $last_update_date->diff( new DateTime() )->days;
 					if( $last_update_date->diff( new DateTime() )->days > 365 ) {
-						echo 'No updates in a year.';
+						$years = $this->days_to_years( $days_since_update );
+						$label = ( 1 === $years ) ? 'year' : 'years';
+
+						echo sb_support_emoji::NEGATIVE . " No updates in {$years} {$label}.";
+					} else {
+						echo sb_support_emoji::POSITIVE;
 					}
 					#echo '<pre>';var_dump( $plugin_details );echo '</pre>';
+				} else {
+					echo sb_support_emoji::QUERY . ' Plugin not found on the WordPress directory.';
 				}
+			} else {
+				echo sb_support_emoji::QUERY . ' Plugin information not found.';
 			}
 		}
 	}
+
+	private function days_to_years( $days ) {
+		return floor( $days / 365 );
+	}
+}
+
+class sb_support_emoji {
+	const POSITIVE = '✔️';
+	const NEGATIVE = '❌';
+	const QUERY    = '❓';
 }
 
 ( new sb_security_check() )->register();
