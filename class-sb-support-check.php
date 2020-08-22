@@ -59,7 +59,7 @@ class Sb_Support_Check {
 						echo esc_html( Sb_Support_Emoji::POSITIVE );
 					}
 				} else {
-					echo esc_html( $check_wp_site['message'] );
+					echo esc_html( Sb_Support_Emoji::QUERY . ' Plugin not found on the WordPress directory.' );
 				}
 			} else {
 				echo esc_html( Sb_Support_Emoji::QUERY . ' Plugin information not found.' );
@@ -87,7 +87,7 @@ class Sb_Support_Check {
 		} else {
 			return [
 				'success' => false,
-				'message' => Sb_Support_Emoji::QUERY . ' Plugin not found on the WordPress directory.',
+				'message' => 'plugin_not_found',
 			];
 		}
 	}
