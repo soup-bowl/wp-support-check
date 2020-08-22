@@ -33,7 +33,7 @@ class Sb_Support_Check {
 	 * @return string[]
 	 */
 	public function plugin_table_columns( $columns ) {
-		$columns['wpsc_status'] = esc_attr_e( 'Support Check', 'wpsecuritycheck' );
+		$columns['wpsc_status'] = esc_attr( 'Support Check', 'wpsecuritycheck' );
 
 		return $columns;
 	}
