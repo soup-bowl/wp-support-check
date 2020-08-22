@@ -18,6 +18,8 @@ require_once trailingslashit( plugin_dir_path( __FILE__ ) ) . 'class-sb-support-
 class Sb_Support_Check {
 	/**
 	 * Inform the WordPress system of our plugin functionality.
+	 *
+	 * @return void Runs filter/action registration hooks with WordPress.
 	 */
 	public function register() {
 		add_filter( 'manage_plugins_columns', array( &$this, 'plugin_table_columns' ) );
