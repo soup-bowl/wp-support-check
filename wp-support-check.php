@@ -18,7 +18,7 @@
  */
 
 if ( ! class_exists( 'Sb_Security_Check' ) ) {
-	require_once trailingslashit( plugin_dir_path( __FILE__ ) ) . 'class-sb-security-check.php';
+	require_once trailingslashit( plugin_dir_path( __FILE__ ) ) . 'class-sb-support-check.php';
 
-	( new Sb_Security_Check() )->register();
+	( new Sb_Support_Check() )->register();
 }

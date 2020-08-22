@@ -8,9 +8,14 @@
  */
 
 /**
+ * Emojis.
+ */
+require_once trailingslashit( plugin_dir_path( __FILE__ ) ) . 'class-sb-support-emoji.php';
+
+/**
  * Main operatioal class.
  */
-class Sb_Security_Check {
+class Sb_Support_Check {
 	/**
 	 * Inform the WordPress system of our plugin functionality.
 	 */
@@ -26,7 +31,7 @@ class Sb_Security_Check {
 	 * @return string[]
 	 */
 	public function plugin_table_columns( $columns ) {
-		$columns['wpsc_status'] = 'Status Check';
+		$columns['wpsc_status'] = esc_attr_e( 'Support Check', 'wpsecuritycheck' );
 
 		return $columns;
 	}
@@ -96,13 +101,3 @@ class Sb_Security_Check {
 		return floor( $days / 365 );
 	}
 }
-
-/**
- * Emojis provided by latin reference.
- */
-class Sb_Support_Emoji {
-	const POSITIVE = "\u{2714}";
-	const NEGATIVE = "\u{274C}";
-	const QUERY    = "\u{2753}";
-}
-
