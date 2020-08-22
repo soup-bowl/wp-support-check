@@ -13,5 +13,6 @@
 class Sb_Support_Emoji {
 	const POSITIVE = "\u{2714}";
 	const NEGATIVE = "\u{274C}";
+	const WARNING  = "\u{26A0}";
 	const QUERY    = "\u{2753}";
 }
