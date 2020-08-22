@@ -82,7 +82,6 @@ class Sb_Support_Check {
 				'success' => true,
 				'age'     => $this->days_to_years( $days_since_update ),
 			];
-			// echo '<pre>';var_dump( $plugin_details );echo '</pre>';.
 		} else {
 			return [
 				'success' => false,
