@@ -10,10 +10,11 @@ License: MIT
 Runs some simple security and vaildity checks on non-standard WordPress functionality.
 
 == Description ==
-TODO
+This plugin currently tests for the following:
 
-== Frequently Asked Questions ==
-TODO
+* Lack of plugin updates for a year.
+* Removed or suspended WordPress plugins.
 
 == Changelog ==
 = 0.1 =
+* Implemented stale plugin check.
