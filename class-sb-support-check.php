@@ -49,7 +49,7 @@ class Sb_Support_Check {
 	public function plugin_table_content( $column_name, $plugin_file, $plugin_data ) {
 		if ( 'wpsc_status' === $column_name ) {
 			if ( isset( $plugin_data['slug'] ) ) {
-				$check_wp_site = $this->check_wordpress_directory( $plugin_data['slug'] );
+				$check_wp_site = $this->check_wordpress_directory( $plugin_data['slug'] );var_dump($check_wp_site);
 
 				if ( $check_wp_site['success'] ) {
 					if ( $check_wp_site['age'] > 1 ) {
@@ -78,11 +78,17 @@ class Sb_Support_Check {
 		if ( ! is_wp_error( $payload ) && 200 === wp_remote_retrieve_response_code( $payload ) ) {
 			$plugin_details   = json_decode( wp_remote_retrieve_body( $payload ) );
 			$last_update_date = DateTime::createFromFormat( 'Y-m-d', substr( $plugin_details->last_updated, 0, 10 ) );
-
 			$days_since_update = $last_update_date->diff( new DateTime() )->days;
+
+			// Pulls in the current version of WordPress we're on ($wp_version).
+			require ABSPATH . WPINC . '/version.php';
+
 			return [
-				'success' => true,
-				'age'     => $this->days_to_years( $days_since_update ),
+				'success'      => true,
+				'tested_wp'    => $plugin_details->tested,
+				'requires_wp'  => $plugin_details->requires,
+				'requires_php' => $plugin_details->requires_php,
+				'age'          => $this->days_to_years( $days_since_update ),
 			];
 		} else {
 			return [
