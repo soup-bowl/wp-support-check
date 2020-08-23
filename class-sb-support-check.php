@@ -32,18 +32,25 @@ class Sb_Support_Check {
 			// Pulls in the current version of WordPress we're on ($wp_version).
 			require ABSPATH . WPINC . '/version.php';
 
-			return [
-				'success'             => true,
-				'remote_tested_wp'    => $plugin_details->tested,
-				'remote_requires_wp'  => $plugin_details->requires,
-				'remote_requires_php' => $plugin_details->requires_php,
-				'age'                 => $this->days_to_years( $days_since_update ),
-			];
+			// Check how long it has been since the plugin was updated.
+			$age_test  = true;
+			$age_count = $this->days_to_years( $days_since_update );
+			if ( $age_count > 1 ) {
+				$age_test = false;
+			}
+
+			return array(
+				'success'  => true,
+				'age_test' => array(
+					'passed' => $age_test,
+					'age'    => $age_count,
+				),
+			);
 		} else {
-			return [
+			return array(
 				'success' => false,
 				'message' => 'plugin_not_found',
-			];
+			);
 		}
 	}
 

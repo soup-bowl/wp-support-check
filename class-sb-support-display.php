@@ -74,10 +74,9 @@ class Sb_Support_Display {
 				$fails         = [];
 
 				if ( $check_wp_site['success'] ) {
-					// Check how long it has been since the plugin was updated.
-					if ( $check_wp_site['age'] > 1 ) {
+					if ( ! $check_wp_site['age_test']['passed'] ) {
 						// translators: %d is the number of years since the plugin in question last recieved an update on wordpress.org.
-						$fails[] = sprintf( __( 'No updates in %d years(s)', 'wpsecuritycheck' ), $check_wp_site['age'] );
+						$fails[] = sprintf( __( 'No updates in %d years(s)', 'wpsecuritycheck' ), $check_wp_site['age_test']['age'] );
 					}
 
 					// Tell the user the results.
