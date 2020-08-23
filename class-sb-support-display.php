@@ -66,7 +66,7 @@ class Sb_Support_Display {
 	 * @return void Function prints to the page.
 	 */
 	public function plugin_table_content( $column_name, $plugin_file, $plugin_data ) {
-		$non_wp_fail_msg = Sb_Support_Emoji::QUERY . ' Plugin not found on the WordPress directory.';
+		$non_wp_fail_msg = Sb_Support_Emoji::QUERY . ' ' . __( 'Plugin not found on the WordPress directory.', 'wpsecuritycheck' );
 
 		if ( 'wpsc_status' === $column_name ) {
 			if ( isset( $plugin_data['url'], $plugin_data['slug'] ) && false !== strpos( $plugin_data['url'], '//wordpress.org/plugins' ) ) {
@@ -76,8 +76,8 @@ class Sb_Support_Display {
 				if ( $check_wp_site['success'] ) {
 					// Check how long it has been since the plugin was updated.
 					if ( $check_wp_site['age'] > 1 ) {
-						$label   = ( 1 === $check_wp_site['age'] ) ? 'year' : 'years';
-						$fails[] = "No updates in {$check_wp_site['age']} {$label}.";
+						// translators: %d is the number of years since the plugin in question last recieved an update on wordpress.org.
+						$fails[] = sprintf( __( 'No updates in %d years(s)', 'wpsecuritycheck' ), $check_wp_site['age'] );
 					}
 
 					// Tell the user the results.
@@ -110,14 +110,15 @@ class Sb_Support_Display {
 			}
 
 			echo wp_kses(
-				Sb_Support_Emoji::NEGATIVE . " Failed {$fail_count} check(s):<ol>{$fail_disp}</ol>",
+				// Translators: %d is a count of how many checks failed.
+				Sb_Support_Emoji::NEGATIVE . ' ' . sprintf( __( 'Failed %d check(s)', 'wpsecuritycheck' ), $fail_count ) . ":<ol>{$fail_disp}</ol>",
 				[
 					'ol' => [],
 					'li' => [],
 				]
 			);
 		} else {
-			echo esc_html( Sb_Support_Emoji::POSITIVE . ' Passed checks.' );
+			echo esc_html( Sb_Support_Emoji::POSITIVE . ' ' . __( 'Passed check(s).', 'wpsecuritycheck' ) );
 		}
 	}
 }
