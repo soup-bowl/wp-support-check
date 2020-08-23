@@ -47,22 +47,27 @@ class Sb_Support_Check {
 	 * @return void Function prints to the page.
 	 */
 	public function plugin_table_content( $column_name, $plugin_file, $plugin_data ) {
+		$non_wp_fail_msg = Sb_Support_Emoji::QUERY . ' Plugin not found on the WordPress directory.';
+
 		if ( 'wpsc_status' === $column_name ) {
-			if ( isset( $plugin_data['slug'] ) ) {
-				$check_wp_site = $this->check_wordpress_directory( $plugin_data['slug'] );var_dump($check_wp_site);
+			if ( isset( $plugin_data['url'], $plugin_data['slug'] ) && false !== strpos( $plugin_data['url'], '//wordpress.org/plugins' ) ) {
+				$check_wp_site = $this->check_wordpress_directory( $plugin_data['slug'] );
+				$fails         = [];
 
 				if ( $check_wp_site['success'] ) {
+					// Check how long it has been since the plugin was updated.
 					if ( $check_wp_site['age'] > 1 ) {
-						$label = ( 1 === $check_wp_site['age'] ) ? 'year' : 'years';
-						echo esc_html( Sb_Support_Emoji::NEGATIVE . " No updates in {$check_wp_site['age']} {$label}." );
-					} else {
-						echo esc_html( Sb_Support_Emoji::POSITIVE );
+						$label   = ( 1 === $check_wp_site['age'] ) ? 'year' : 'years';
+						$fails[] = "No updates in {$check_wp_site['age']} {$label}.";
 					}
+
+					// Tell the user the results.
+					$this->success_or_fail_message( $fails );
 				} else {
-					echo esc_html( Sb_Support_Emoji::QUERY . ' Plugin not found on the WordPress directory.' );
+					echo esc_html( $non_wp_fail_msg );
 				}
 			} else {
-				echo esc_html( Sb_Support_Emoji::QUERY . ' Plugin information not found.' );
+				echo esc_html( $non_wp_fail_msg );
 			}
 		}
 	}
@@ -76,19 +81,19 @@ class Sb_Support_Check {
 	private function check_wordpress_directory( $slug ) {
 		$payload = wp_remote_get( "https://api.wordpress.org/plugins/info/1.0/{$slug}.json" );
 		if ( ! is_wp_error( $payload ) && 200 === wp_remote_retrieve_response_code( $payload ) ) {
-			$plugin_details   = json_decode( wp_remote_retrieve_body( $payload ) );
-			$last_update_date = DateTime::createFromFormat( 'Y-m-d', substr( $plugin_details->last_updated, 0, 10 ) );
+			$plugin_details    = json_decode( wp_remote_retrieve_body( $payload ) );
+			$last_update_date  = DateTime::createFromFormat( 'Y-m-d', substr( $plugin_details->last_updated, 0, 10 ) );
 			$days_since_update = $last_update_date->diff( new DateTime() )->days;
 
 			// Pulls in the current version of WordPress we're on ($wp_version).
 			require ABSPATH . WPINC . '/version.php';
 
 			return [
-				'success'      => true,
-				'tested_wp'    => $plugin_details->tested,
-				'requires_wp'  => $plugin_details->requires,
-				'requires_php' => $plugin_details->requires_php,
-				'age'          => $this->days_to_years( $days_since_update ),
+				'success'             => true,
+				'remote_tested_wp'    => $plugin_details->tested,
+				'remote_requires_wp'  => $plugin_details->requires,
+				'remote_requires_php' => $plugin_details->requires_php,
+				'age'                 => $this->days_to_years( $days_since_update ),
 			];
 		} else {
 			return [
@@ -106,5 +111,35 @@ class Sb_Support_Check {
 	 */
 	private function days_to_years( $days ) {
 		return floor( $days / 365 );
+	}
+
+	/**
+	 * Prints a message on-screen (when called) relating to the success of the tests.
+	 *
+	 * @param array|null $fails The fail-response messages provided by the tests.
+	 * @return void Prints the status message to page.
+	 */
+	private function success_or_fail_message( $fails ) {
+		if ( empty( $fails ) ) {
+			$fails = [];
+		}
+
+		$fail_count = count( $fails );
+		if ( $fail_count > 0 ) {
+			$fail_disp = '';
+			foreach ( $fails as $fail ) {
+				$fail_disp .= '<li>' . esc_html( $fail ) . '</li>';
+			}
+
+			echo wp_kses(
+				Sb_Support_Emoji::NEGATIVE . " Failed {$fail_count} check(s):<ol>{$fail_disp}</ol>",
+				[
+					'ol' => [],
+					'li' => [],
+				]
+			);
+		} else {
+			echo esc_html( Sb_Support_Emoji::POSITIVE . ' Passed checks.' );
+		}
 	}
 }
